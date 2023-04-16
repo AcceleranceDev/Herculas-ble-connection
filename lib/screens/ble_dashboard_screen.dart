@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:herculas_bluetooth_connectivity/base/i18n/i18n_engine.dart';
 import 'package:herculas_bluetooth_connectivity/constant/image_constant.dart';
-import 'package:herculas_bluetooth_connectivity/locale/app_localizations.dart';
 import 'package:herculas_bluetooth_connectivity/model/card_entity.dart';
 import 'package:herculas_bluetooth_connectivity/route/route_constant.dart';
 import 'package:herculas_bluetooth_connectivity/widget/dashboard_card.dart';
@@ -19,8 +17,8 @@ class BleDashboardScreen extends StatelessWidget {
           children: [
             SvgPicture.asset(ImageConstant.arrowLeft),
             const SizedBox(height: 19),
-            Text(
-              AppLocalizations.yourAppGotMoreHelpful.i18n,
+            const Text(
+              "Your App got more helpful",
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 25,
