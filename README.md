@@ -2,6 +2,13 @@
 
 A new Flutter project.
 
+Flutter Version: 3.7.3
+Dart Version: 2.19.2
+Created at: 15 April 2023
+State-Management: Bloc (RxDart,Stream,Repository Pattern)
+Developer: Dilshad Alam
+
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
