@@ -6,7 +6,7 @@ void main() {
   start(
     AppConfigurations(
       apiConfigurations: ApiConfigurations(
-        baseUrl: "Production API Base URL", // Will Add production  base URL
+        baseUrl: "Development API Base URL", // Will Add development base URL
       ),
     ),
   );
