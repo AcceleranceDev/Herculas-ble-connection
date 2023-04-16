@@ -1,4 +1,4 @@
-import 'package:herculas_bluetooth_connectivity/base/base_bloc.dart';
+import 'package:herculas_bluetooth_connectivity/base/base_bloc/base_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 class RangeBloc extends BaseBloc {
