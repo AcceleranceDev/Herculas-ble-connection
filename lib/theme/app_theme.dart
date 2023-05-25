@@ -8,7 +8,6 @@ class AppTheme {
       primarySwatch: Colors.blue,
       fontFamily: FontConstant.timNewRoman,
       scaffoldBackgroundColor: ColorConst.scaffoldColor,
-      cardColor: ColorConst.dashboardCardColor,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorConst.buttonColor,

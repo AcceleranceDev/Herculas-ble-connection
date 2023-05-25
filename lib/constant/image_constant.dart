@@ -6,4 +6,7 @@ class ImageConstant {
   static String arrowLeft = '$_basePath/arrow-left.svg';
   static String add = '$_basePath/add.svg';
   static String minus = '$_basePath/minus.svg';
+  static String smile = '$_basePath/smile.png';
+  static String iphone = '$_basePath/iphone.png';
+  static String meeting = '$_basePath/meeting.png';
 }

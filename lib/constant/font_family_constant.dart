@@ -1,5 +1,6 @@
 class FontConstant {
-  static const inter = "Inter";
+  static const dmSans = "DM Sans";
   static const timNewRoman = "Times New Roman";
   static const lato = "Lato";
+  static const ariel = "Arial";
 }
