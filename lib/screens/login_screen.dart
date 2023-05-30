@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:herculas_bluetooth_connectivity/constant/color_constant.dart';
 import 'package:herculas_bluetooth_connectivity/constant/image_constant.dart';
+import 'package:herculas_bluetooth_connectivity/route/route_constant.dart';
 import 'package:herculas_bluetooth_connectivity/theme/app_text_style.dart';
 import 'package:herculas_bluetooth_connectivity/widget/common_otp_field.dart';
 import 'package:herculas_bluetooth_connectivity/widget/primary_button.dart';
@@ -19,13 +20,13 @@ class LoginScreen extends StatelessWidget {
       body: ListView(
         children: [
           _topCard(context),
-          const SizedBox(height: 72),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Image.asset(ImageConstant.eMark),
                 Text(
                   'Confirm your PIN',
                   style: AppTextStyle.header2,
@@ -36,10 +37,12 @@ class LoginScreen extends StatelessWidget {
                   onChange: (v) {},
                   onComplete: (v) {},
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 35),
                 PrimaryButton(
                   label: "Sign In",
-                  onPress: () {},
+                  onPress: () {
+                    Navigator.pushNamed(context, RouteConstant.homeScreen);
+                  },
                 )
               ],
             ),

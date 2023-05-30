@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:herculas_bluetooth_connectivity/bloc/range_bloc.dart';
 import 'package:herculas_bluetooth_connectivity/constant/color_constant.dart';
 import 'package:herculas_bluetooth_connectivity/constant/global_variable_constant.dart';
 import 'package:herculas_bluetooth_connectivity/constant/image_constant.dart';
 import 'package:herculas_bluetooth_connectivity/theme/app_text_style.dart';
 import 'package:herculas_bluetooth_connectivity/widget/set_data_button_card.dart';
 
-class ResetBluetoothCommand extends StatelessWidget {
+class ResetBluetoothCommand extends StatefulWidget {
   const ResetBluetoothCommand({Key? key}) : super(key: key);
+
+  @override
+  State<ResetBluetoothCommand> createState() => _ResetBluetoothCommandState();
+}
+
+class _ResetBluetoothCommandState extends State<ResetBluetoothCommand> {
+  late RangeBloc rangeBloc;
+
+  @override
+  void initState() {
+    rangeBloc = RangeBloc();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,24 +66,28 @@ class ResetBluetoothCommand extends StatelessWidget {
                       ],
                     ),
                     children: [
-                      SetDataButtonCard(
-                        setValue: "0",
-                        getValue: "0",
-                        getValueButtonText: e.getButtonLabel,
-                        setValueButtonText: e.setButtonLabel,
-                        decrementedValue: (p0) {
-                          print("Decremented");
-                        },
-                        incrementedValue: (p0) {
-                          print("Incremented");
-                        },
-                        onSetClick: () {
-                          print("OnSet Called");
-                        },
-                        onGetClick: () {
-                          print("onGet Called");
-                        },
-                      )
+                      StreamBuilder<int>(
+                          stream: rangeBloc.rangeCounter,
+                          builder: (context, snapshot) {
+                            return SetDataButtonCard(
+                              setValue: snapshot.data.toString(),
+                              getValue: "0",
+                              getValueButtonText: e.getButtonLabel,
+                              setValueButtonText: e.setButtonLabel,
+                              decrementedValue: (p0) {
+                                rangeBloc.decrementRange();
+                              },
+                              incrementedValue: (p0) {
+                                rangeBloc.incrementRange();
+                              },
+                              onSetClick: () {
+                                print("OnSet Called");
+                              },
+                              onGetClick: () {
+                                print("onGet Called");
+                              },
+                            );
+                          })
                     ],
                   ),
                 ),

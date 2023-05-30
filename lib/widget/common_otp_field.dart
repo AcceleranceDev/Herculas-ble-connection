@@ -30,7 +30,7 @@ class CommonOtpField extends StatelessWidget {
       validator: validator,
       pinTheme: PinTheme(
         fieldOuterPadding: const EdgeInsets.symmetric(horizontal: 4),
-        shape: PinCodeFieldShape.circle,
+        shape: PinCodeFieldShape.box,
         fieldHeight: 50,
         fieldWidth: 50,
         activeFillColor: ColorConst.appBarColor,

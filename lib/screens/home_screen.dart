@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:herculas_bluetooth_connectivity/constant/color_constant.dart';
+import 'package:herculas_bluetooth_connectivity/route/route_constant.dart';
 import 'package:herculas_bluetooth_connectivity/theme/app_text_style.dart';
 import 'package:herculas_bluetooth_connectivity/widget/history.dart';
 import 'package:herculas_bluetooth_connectivity/widget/primary_button.dart';
@@ -20,6 +21,10 @@ class _SearchingBluetooth extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text(
+          "Sasy",
+          style: AppTextStyle.header2,
+        ),
         backgroundColor: ColorConst.appBarColor,
       ),
       body: SafeArea(
@@ -112,7 +117,9 @@ class _ConnectedBluetooth extends StatelessWidget {
               PrimaryButton(
                 label: "Click here to view details",
                 style: AppTextStyle.title.copyWith(color: ColorConst.black),
-                onPress: () {},
+                onPress: () {
+                  Navigator.pushNamed(context, RouteConstant.resetCommand);
+                },
               ),
               const SizedBox(height: 25),
               Text(
