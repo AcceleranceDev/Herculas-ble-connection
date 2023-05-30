@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:herculas_bluetooth_connectivity/base/configuration/app_configuration.dart';
 import 'package:herculas_bluetooth_connectivity/base/i18n/i18n_engine.dart';
+import 'package:herculas_bluetooth_connectivity/bloc/bluetooth_bloc.dart';
 import 'package:herculas_bluetooth_connectivity/constant/global_variable_constant.dart';
 import 'package:herculas_bluetooth_connectivity/route/route_manage.dart';
 import 'package:herculas_bluetooth_connectivity/screens/reset_bluetooth_command.dart';
@@ -27,6 +28,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    BluetoothBloc().getDiscoveredBluetoothDevice();
+    BluetoothBloc().getBoundedBluetoothDevices();
   }
 
   @override

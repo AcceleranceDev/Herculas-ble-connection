@@ -42,6 +42,7 @@ dependencies:
   i18n_extension: ^8.0.0
   pin_code_fields: ^7.4.0
   syncfusion_flutter_sliders: ^21.2.4
+  flutter_bluetooth_serial: ^0.4.0
 
 
 
