@@ -3,6 +3,7 @@ import 'package:rxdart/rxdart.dart';
 
 class BluetoothRepo {
   final bluetoothConnection = FlutterBluetoothSerial.instance;
+
   Stream<List<BluetoothDevice>> discoveredBluetoothDevice() {
     final result = BehaviorSubject<List<BluetoothDevice>>();
     List<BluetoothDevice> devices = [];

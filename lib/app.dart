@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:herculas_bluetooth_connectivity/base/configuration/app_configuration.dart';
 import 'package:herculas_bluetooth_connectivity/base/i18n/i18n_engine.dart';
-import 'package:herculas_bluetooth_connectivity/bloc/bluetooth_bloc.dart';
 import 'package:herculas_bluetooth_connectivity/constant/global_variable_constant.dart';
 import 'package:herculas_bluetooth_connectivity/route/route_manage.dart';
-import 'package:herculas_bluetooth_connectivity/screens/reset_bluetooth_command.dart';
+import 'package:herculas_bluetooth_connectivity/screens/home_screen.dart';
 import 'package:i18n_extension/i18n_widget.dart';
 
 import 'theme/app_theme.dart';
@@ -28,8 +27,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    BluetoothBloc().getDiscoveredBluetoothDevice();
-    BluetoothBloc().getBoundedBluetoothDevices();
   }
 
   @override
@@ -40,7 +37,7 @@ class _MyAppState extends State<MyApp> {
         supportedLocales: GlobalVariableConstant.supportedLocale,
         title: 'Flutter Demo',
         theme: AppTheme.getTheme(),
-        home: ResetBluetoothCommand(),
+        home: HomeScreen(),
       ),
     );
   }

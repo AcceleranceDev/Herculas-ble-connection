@@ -1,21 +1,118 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:herculas_bluetooth_connectivity/bloc/bluetooth_bloc.dart';
 import 'package:herculas_bluetooth_connectivity/constant/color_constant.dart';
+import 'package:herculas_bluetooth_connectivity/state/bonded_bluetooth_state.dart';
+import 'package:herculas_bluetooth_connectivity/state/discovered_bluetooth_state.dart';
 import 'package:herculas_bluetooth_connectivity/theme/app_text_style.dart';
 import 'package:herculas_bluetooth_connectivity/widget/history.dart';
 import 'package:herculas_bluetooth_connectivity/widget/primary_button.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late BluetoothBloc bluetoothBloc;
+  @override
+  void initState() {
+    super.initState();
+    bluetoothBloc = BluetoothBloc();
+    bluetoothBloc.getBoundedBluetoothDevices();
+    bluetoothBloc.getDiscoveredBluetoothDevice();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return _ConnectedBluetooth();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: ColorConst.appBarColor,
+      ),
+      body: StreamBuilder<DiscoveredBluetoothState>(
+        stream: bluetoothBloc.discoveredBluetoothState,
+        builder: (context, snapshot) {
+          final discoveredState = snapshot.data;
+          return StreamBuilder<BoundedBluetoothState>(
+              stream: bluetoothBloc.boundedBluetoothState,
+              builder: (context, snapshot) {
+                final state = snapshot.data;
+                if ((state?.isLoading() ?? false) ||
+                    (discoveredState?.isLoading() ?? false)) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return ListView(
+                  padding: const EdgeInsets.all(10),
+                  children: [
+                    Text(
+                      "New Device",
+                      style: AppTextStyle.header1,
+                    ),
+                    const SizedBox(height: 10),
+                    if (discoveredState?.data == null ||
+                        discoveredState!.data!.isEmpty)
+                      Text(
+                        "No New Device Found",
+                        style: AppTextStyle.header1,
+                      )
+                    else
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: ColorConst.appBarColor,
+                            width: 3,
+                          ),
+                        ),
+                        child: Column(
+                            children: discoveredState.data!
+                                .map((e) => BluetoothHistory(
+                                      name: e.name,
+                                    ))
+                                .toList()),
+                      ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "History",
+                      style: AppTextStyle.header1,
+                    ),
+                    if (state?.data == null || state!.data!.isEmpty)
+                      Text(
+                        "No History Found",
+                        style: AppTextStyle.header1,
+                      )
+                    else
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: ColorConst.appBarColor,
+                            width: 3,
+                          ),
+                        ),
+                        child: Column(
+                            children: state!.data!
+                                .map((e) => BluetoothHistory(
+                                      name: e.name,
+                                    ))
+                                .toList()),
+                      )
+                  ],
+                );
+              });
+        },
+      ),
+    );
   }
 }
 
-class _SearchingBluetooth extends StatelessWidget {
-  const _SearchingBluetooth({Key? key}) : super(key: key);
-
+class BondedBluetoothDevices extends StatelessWidget {
+  const BondedBluetoothDevices({Key? key, this.data}) : super(key: key);
+  final List<BluetoothDevice>? data;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,11 +156,12 @@ class _SearchingBluetooth extends StatelessWidget {
                       width: 3,
                     ),
                   ),
-                  child: ListView(
+                  child: ListView.builder(
                     shrinkWrap: true,
-                    children:
-                        List.generate(16, (index) => const BluetoothHistory())
-                            .toList(),
+                    itemCount: data?.length,
+                    itemBuilder: (context, index) {
+                      return BluetoothHistory(name: data?[index].name);
+                    },
                   ),
                 ),
               )
