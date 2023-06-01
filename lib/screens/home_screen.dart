@@ -16,13 +16,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late BluetoothBloc bluetoothBloc;
+  late BluetoothBloc _bluetoothBloc;
+
   @override
   void initState() {
     super.initState();
-    bluetoothBloc = BluetoothBloc();
-    bluetoothBloc.getBoundedBluetoothDevices();
-    bluetoothBloc.getDiscoveredBluetoothDevice();
+    _bluetoothBloc = BluetoothBloc();
+    _bluetoothBloc.getBondedBluetoothDevices();
+    _bluetoothBloc.getDiscoveredBluetoothDevice();
   }
 
   @override
@@ -32,78 +33,101 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: ColorConst.appBarColor,
       ),
       body: StreamBuilder<DiscoveredBluetoothState>(
-        stream: bluetoothBloc.discoveredBluetoothState,
+        stream: _bluetoothBloc.discoveredBluetoothState,
         builder: (context, snapshot) {
           final discoveredState = snapshot.data;
-          return StreamBuilder<BoundedBluetoothState>(
-              stream: bluetoothBloc.boundedBluetoothState,
-              builder: (context, snapshot) {
-                final state = snapshot.data;
-                if ((state?.isLoading() ?? false) ||
-                    (discoveredState?.isLoading() ?? false)) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                return ListView(
-                  padding: const EdgeInsets.all(10),
-                  children: [
-                    Text(
-                      "New Device",
-                      style: AppTextStyle.header1,
-                    ),
-                    const SizedBox(height: 10),
-                    if (discoveredState?.data == null ||
-                        discoveredState!.data!.isEmpty)
-                      Text(
-                        "No New Device Found",
-                        style: AppTextStyle.header1,
-                      )
-                    else
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: ColorConst.appBarColor,
-                            width: 3,
-                          ),
-                        ),
-                        child: Column(
-                            children: discoveredState.data!
-                                .map((e) => BluetoothHistory(
-                                      name: e.name,
-                                    ))
-                                .toList()),
-                      ),
-                    const SizedBox(height: 20),
-                    Text(
-                      "History",
-                      style: AppTextStyle.header1,
-                    ),
-                    if (state?.data == null || state!.data!.isEmpty)
-                      Text(
-                        "No History Found",
-                        style: AppTextStyle.header1,
-                      )
-                    else
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: ColorConst.appBarColor,
-                            width: 3,
-                          ),
-                        ),
-                        child: Column(
-                            children: state!.data!
-                                .map((e) => BluetoothHistory(
-                                      name: e.name,
-                                    ))
-                                .toList()),
-                      )
-                  ],
+          return StreamBuilder<BondedBluetoothState>(
+            stream: _bluetoothBloc.boundedBluetoothState,
+            builder: (context, snapshot) {
+              final state = snapshot.data;
+              if ((state?.isLoading() ?? false) ||
+                  (discoveredState?.isLoading() ?? false)) {
+                return const Center(
+                  child: CircularProgressIndicator(),
                 );
-              });
+              }
+              return ListView(
+                padding: const EdgeInsets.all(10),
+                children: [
+                  Text(
+                    "New Device",
+                    style: AppTextStyle.header1,
+                  ),
+                  const SizedBox(height: 10),
+                  if (discoveredState?.data == null ||
+                      discoveredState!.data!.isEmpty)
+                    Text(
+                      "No New Device Found",
+                      style: AppTextStyle.header1,
+                    )
+                  else
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: ColorConst.appBarColor,
+                          width: 3,
+                        ),
+                      ),
+                      child: Column(
+                          children: discoveredState.data!
+                              .map((e) => InkWell(
+                                    onTap: () {
+                                      _bluetoothBloc.connectToNewDevice(
+                                          address: e.address, context: context);
+                                    },
+                                    child: BluetoothHistory(
+                                      name: e.name,
+                                    ),
+                                  ))
+                              .toList()),
+                    ),
+                  const SizedBox(height: 20),
+                  Text(
+                    "History",
+                    style: AppTextStyle.header1,
+                  ),
+                  if (state?.data == null || state!.data!.isEmpty)
+                    Text(
+                      "No History Found",
+                      style: AppTextStyle.header1,
+                    )
+                  else
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: ColorConst.appBarColor,
+                          width: 3,
+                        ),
+                      ),
+                      child: Column(
+                          children: state.data!
+                              .map(
+                                (e) => InkWell(
+                                  onTap: () {
+                                    _bluetoothBloc.connectToBondedDevice(
+                                      address: e.address,
+                                      context: context,
+                                    );
+                                  },
+                                  child: BluetoothHistory(
+                                    name: e.name,
+                                    onUnpairClick: () {
+                                      _bluetoothBloc
+                                          .removeBondedBluetoothDevice(
+                                              address: e.address,
+                                              context: context);
+                                    },
+                                  ),
+                                ),
+                              )
+                              .toList()),
+                    )
+                ],
+              );
+            },
+          );
         },
       ),
     );
@@ -113,6 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
 class BondedBluetoothDevices extends StatelessWidget {
   const BondedBluetoothDevices({Key? key, this.data}) : super(key: key);
   final List<BluetoothDevice>? data;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,7 +185,10 @@ class BondedBluetoothDevices extends StatelessWidget {
                     shrinkWrap: true,
                     itemCount: data?.length,
                     itemBuilder: (context, index) {
-                      return BluetoothHistory(name: data?[index].name);
+                      return BluetoothHistory(
+                        name: data?[index].name,
+                        onUnpairClick: () {},
+                      );
                     },
                   ),
                 ),
@@ -229,9 +257,11 @@ class _ConnectedBluetooth extends StatelessWidget {
                   ),
                   child: ListView(
                     shrinkWrap: true,
-                    children:
-                        List.generate(16, (index) => const BluetoothHistory())
-                            .toList(),
+                    children: List.generate(
+                        16,
+                        (index) => BluetoothHistory(
+                              onUnpairClick: () {},
+                            )).toList(),
                   ),
                 ),
               )
