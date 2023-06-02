@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:herculas_bluetooth_connectivity/bloc/bluetooth_bloc.dart';
 import 'package:herculas_bluetooth_connectivity/constant/color_constant.dart';
 import 'package:herculas_bluetooth_connectivity/state/bonded_bluetooth_state.dart';
@@ -22,8 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _bluetoothBloc = BluetoothBloc();
-    _bluetoothBloc.getBondedBluetoothDevices();
-    _bluetoothBloc.getDiscoveredBluetoothDevice();
+    _bluetoothBloc.getAllBluetoothDevices(context);
   }
 
   @override
@@ -74,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               .map((e) => InkWell(
                                     onTap: () {
                                       _bluetoothBloc.connectToNewDevice(
-                                          address: e.address, context: context);
+                                          device: e, context: context);
                                     },
                                     child: BluetoothHistory(
                                       name: e.name,
@@ -107,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 (e) => InkWell(
                                   onTap: () {
                                     _bluetoothBloc.connectToBondedDevice(
-                                      address: e.address,
+                                      device: e,
                                       context: context,
                                     );
                                   },
@@ -116,8 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onUnpairClick: () {
                                       _bluetoothBloc
                                           .removeBondedBluetoothDevice(
-                                              address: e.address,
-                                              context: context);
+                                              device: e, context: context);
                                     },
                                   ),
                                 ),

@@ -1,4 +1,4 @@
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:herculas_bluetooth_connectivity/base/base_bloc/base_ui_state.dart';
 
 class BondedBluetoothState extends BaseUiState<List<BluetoothDevice>> {

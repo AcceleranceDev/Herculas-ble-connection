@@ -1,11 +1,9 @@
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:herculas_bluetooth_connectivity/base/base_bloc/base_ui_state.dart';
 
-class BoundedBluetoothConnectionState extends BaseUiState<BluetoothConnection> {
+class BoundedBluetoothConnectionState extends BaseUiState {
   BoundedBluetoothConnectionState.loading() : super.loading();
 
-  BoundedBluetoothConnectionState.completed(BluetoothConnection data)
-      : super.completed(data: data);
+  BoundedBluetoothConnectionState.completed() : super.completed();
 
   BoundedBluetoothConnectionState.error(dynamic error) : super.error(error);
 }

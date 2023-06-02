@@ -1,33 +1,47 @@
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class BluetoothRepo {
-  final _bluetoothConnection = FlutterBluetoothSerial.instance;
-
+  FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   Stream<List<BluetoothDevice>> discoveredBluetoothDevice() {
-    final result = BehaviorSubject<List<BluetoothDevice>>();
+    return Stream.fromFuture(getDiscovered());
+  }
+
+  Future<List<BluetoothDevice>> getDiscovered() async {
     List<BluetoothDevice> devices = [];
-    _bluetoothConnection.startDiscovery().listen((event) {
-      devices.add(event.device);
+    final data = await flutterBlue.startScan(timeout: Duration(seconds: 4));
+    print("Data==-$data");
+    flutterBlue.scanResults.listen((results) {
+      // do something with scan results
+      for (ScanResult r in results) {
+        devices.add(r.device);
+
+        print('${r.device.name} found! rssi: ${r.rssi}');
+      }
     });
-    result.add(devices);
-    return result;
+    return devices;
   }
 
   Stream<List<BluetoothDevice>> getBondedBluetoothDevices() {
-    return Stream.fromFuture(_bluetoothConnection.getBondedDevices());
+    return Stream.fromFuture(flutterBlue.bondedDevices);
   }
 
-  Stream<BluetoothConnection> connectToNearByDevice({required String address}) {
-    return Stream.fromFuture(BluetoothConnection.toAddress(address));
+  Stream<void> connectToNearByDevice({required BluetoothDevice device}) {
+    return Stream.fromFuture(device.connect());
   }
 
-  Stream<bool?> removeBondedBluetoothDevice({required String address}) {
-    return Stream.fromFuture(
-        _bluetoothConnection.removeDeviceBondWithAddress(address));
+  Stream<bool?> removeBondedBluetoothDevice({required BluetoothDevice device}) {
+    return Stream.fromFuture(device.removeBond());
   }
 
-  Stream<bool?> bondNewBluetoothDevice({required String address}) {
-    return Stream.fromFuture(_bluetoothConnection.bondDeviceAtAddress(address));
+  Stream<void> bondNewBluetoothDevice({required BluetoothDevice device}) {
+    return Stream.fromFuture(device.pair());
+  }
+
+  Stream<BluetoothState> isBluetoothOn() {
+    return flutterBlue.state;
+  }
+
+  Future<bool> turnOnBluetooth() async {
+    return await flutterBlue.turnOn();
   }
 }

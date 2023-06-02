@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:herculas_bluetooth_connectivity/base/base_bloc/base_bloc.dart';
 import 'package:herculas_bluetooth_connectivity/repo/bluetooth_repo.dart';
 import 'package:herculas_bluetooth_connectivity/state/bonded_bluetooth_connection_state.dart';
@@ -14,7 +15,19 @@ class BluetoothBloc extends BaseBloc {
       BehaviorSubject<BoundedBluetoothConnectionState>();
   final _bluetoothRepo = BluetoothRepo();
 
-  void getDiscoveredBluetoothDevice() {
+  void getAllBluetoothDevices(BuildContext context) {
+    subscriptions.add(_bluetoothRepo.isBluetoothOn().listen((event) {
+      if (event == BluetoothState.on) {
+        _getDiscoveredBluetoothDevice();
+        _getBondedBluetoothDevices();
+      }
+      if (event == BluetoothState.off) {
+        _bluetoothRepo.turnOnBluetooth();
+      }
+    }));
+  }
+
+  void _getDiscoveredBluetoothDevice() {
     subscriptions.add(
       _bluetoothRepo
           .discoveredBluetoothDevice()
@@ -30,7 +43,7 @@ class BluetoothBloc extends BaseBloc {
     );
   }
 
-  void getBondedBluetoothDevices() {
+  void _getBondedBluetoothDevices() {
     subscriptions.add(
       _bluetoothRepo
           .getBondedBluetoothDevices()
@@ -47,13 +60,13 @@ class BluetoothBloc extends BaseBloc {
   }
 
   void connectToBondedDevice({
-    required String address,
+    required BluetoothDevice device,
     required BuildContext context,
   }) {
     subscriptions.add(
       _bluetoothRepo
-          .connectToNearByDevice(address: address)
-          .map((data) => BoundedBluetoothConnectionState.completed(data))
+          .connectToNearByDevice(device: device)
+          .map((data) => BoundedBluetoothConnectionState.completed())
           .startWith(BoundedBluetoothConnectionState.loading())
           .onErrorReturnWith((error, stackTrace) =>
               BoundedBluetoothConnectionState.error(error))
@@ -71,35 +84,30 @@ class BluetoothBloc extends BaseBloc {
   }
 
   void connectToNewDevice({
-    required String address,
+    required BluetoothDevice device,
     required BuildContext context,
   }) {
     DialogUtils.showLoader(context);
     subscriptions.add(
-      _bluetoothRepo.bondNewBluetoothDevice(address: address).listen(
+      _bluetoothRepo.bondNewBluetoothDevice(device: device).listen(
         (event) {
-          if (event == true) {
-            connectToBondedDevice(address: address, context: context);
-          } else {
-            print("Error to pair new device");
-            DialogUtils.hideLoader(context);
-          }
+          connectToBondedDevice(device: device, context: context);
         },
       ),
     );
   }
 
   void removeBondedBluetoothDevice({
-    required String address,
+    required BluetoothDevice device,
     required BuildContext context,
   }) {
     DialogUtils.showLoader(context);
     subscriptions.add(
-      _bluetoothRepo.removeBondedBluetoothDevice(address: address).listen(
+      _bluetoothRepo.removeBondedBluetoothDevice(device: device).listen(
         (event) {
           DialogUtils.hideLoader(context);
           if (event == true) {
-            getBondedBluetoothDevices();
+            _getBondedBluetoothDevices();
           }
           print("Unbound bluetooth status--- $event");
         },
